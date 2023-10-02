@@ -2,9 +2,9 @@ const express = require("express");
 const cloudinary = require("../../utils/cloudinary");
 const Items = require("../../Models/Deborah/items");
 const router = express.Router();
-
+const { authentication } = require("../../auth/authentication");
 //to save item details
-router.post("/save", (req, res) => {
+router.post("/save", authentication, (req, res) => {
   const paths = req.file.path;
   const { name, category, quantity, price, status, Description, sellerID } =
     req.body;
@@ -57,7 +57,7 @@ router.post("/save", (req, res) => {
 });
 
 //read all item details from database
-router.get("/getItemDetails", (req, res) => {
+router.get("/getItemDetails", authentication, (req, res) => {
   Items.find().exec((err, getAllItems) => {
     if (err) {
       return res.status(400).json({
@@ -72,7 +72,7 @@ router.get("/getItemDetails", (req, res) => {
 });
 
 //get specific item's details
-router.get("/getOneItem/:id", (req, res) => {
+router.get("/getOneItem/:id", authentication, (req, res) => {
   let itemID = req.params.id;
 
   Items.findById(itemID, (err, getOneItem) => {
@@ -91,7 +91,7 @@ router.get("/getOneItem/:id", (req, res) => {
 });
 
 //update item details
-router.put("/itemDetails/update/:id", (req, res) => {
+router.put("/itemDetails/update/:id", authentication, (req, res) => {
   Items.findByIdAndUpdate(
     req.params.id,
     {
@@ -112,7 +112,7 @@ router.put("/itemDetails/update/:id", (req, res) => {
 });
 
 //delete specific item's details
-router.delete("/itemDetails/delete/:id", (req, res) => {
+router.delete("/itemDetails/delete/:id", authentication, (req, res) => {
   Items.findByIdAndRemove(req.params.id).exec((err, deletedItemDetails) => {
     if (err) {
       return res.status(400).json({
