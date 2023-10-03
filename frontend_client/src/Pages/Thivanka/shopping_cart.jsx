@@ -51,7 +51,10 @@ function ShoppingCart() {
 
   const getShippingDetails = () => {
     axios
-      .get(`http://localhost:8000/user/address/get/${email}`)
+      .get(`http://localhost:8000/user/address/get/${email}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         console.log(res);
         setShippingDetails(res.data[0]);
@@ -68,7 +71,10 @@ function ShoppingCart() {
 
   const getPaymentOptions = () => {
     axios
-      .get(`http://localhost:8000/user/payment-options/get/${email}`)
+      .get(`http://localhost:8000/user/payment-options/get/${email}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         console.log(res);
         setPaymentDetails(res.data[0]);
@@ -81,7 +87,10 @@ function ShoppingCart() {
 
   const reloadHandler = () => {
     axios
-      .get(`http://localhost:8000/client/cart/item/${email}`)
+      .get(`http://localhost:8000/client/cart/item/${email}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         setDetails(res.data);
       })
@@ -92,7 +101,10 @@ function ShoppingCart() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/client/cart/item/${email}`)
+      .get(`http://localhost:8000/client/cart/item/${email}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data !== null) {
           console.log("res.data", res.data);
@@ -123,7 +135,10 @@ function ShoppingCart() {
     );
     if (confirmBox === true) {
       axios
-        .get(`http://localhost:8000/client/cart/item/${email}`)
+        .get(`http://localhost:8000/client/cart/item/${email}`, {
+          withCredentials: true,
+          credentials: "include",
+        })
         .then((res) => {
           if (res.data.status === true) {
             alert("Cart Clear");
@@ -170,7 +185,10 @@ function ShoppingCart() {
      };
 
     axios
-      .post(`http://localhost:8000/client/order/save`, data)
+      .post(`http://localhost:8000/client/order/save`, data, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === true) {
           alert("Order sucessfully Updated !!");

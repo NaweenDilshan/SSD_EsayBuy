@@ -13,7 +13,10 @@ function FeedbackPage() {
   
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/client/to-be-review/order/${Id}`)
+      .get(`http://localhost:8000/client/to-be-review/order/${Id}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === false) {
           alert(res.data.message);

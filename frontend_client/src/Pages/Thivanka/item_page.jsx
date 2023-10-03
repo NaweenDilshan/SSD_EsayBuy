@@ -58,13 +58,15 @@ function ItemPage() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/client/each/item/${id}`)
+      .get(`http://localhost:8000/client/each/item/${id}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === true) {
-          setDetails(res.data.data)
-        }
-        else {
-          alert(res.data.message)
+          setDetails(res.data.data);
+        } else {
+          alert(res.data.message);
         }
       })
       .catch((err) => {
@@ -89,7 +91,10 @@ function ItemPage() {
 
   const addToCartHandler = () => {
     axios
-      .post("http://localhost:8000/client/cart/item/save", data)
+      .post("http://localhost:8000/client/cart/item/save", data, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === true) {
           navigate("/cart");

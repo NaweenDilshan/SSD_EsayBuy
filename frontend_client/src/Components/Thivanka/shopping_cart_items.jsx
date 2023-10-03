@@ -9,7 +9,13 @@ function ShoppingCartItems(props) {
 
   const deleteHandler = () => {
      axios
-       .delete(`http://localhost:8000/client/cart/item/remove/${props.email}/${props.id}`)
+       .delete(
+         `http://localhost:8000/client/cart/item/remove/${props.email}/${props.id}`,
+         {
+           withCredentials: true,
+           credentials: "include",
+         }
+       )
        .then((res) => {
          if (res.data.status === true) {
            window.location.reload(true);

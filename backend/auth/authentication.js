@@ -6,7 +6,7 @@ const authentication = (req, res, next) => {
   try {
     let cookies = req.cookies;
       const tokenCookie = cookies.token;
-      console.log(cookies);
+    console.log(req.cookies);
     if (tokenCookie == null) {
       res.status(401).send("Authentication failed. Please login again.");
       return;

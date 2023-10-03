@@ -27,7 +27,10 @@ function UserProfileAddAddress() {
   const getShippingDetails = (state) => {
     const id = state;
     axios
-      .get(`http://localhost:8000/user/address/getbyid/${id}`)
+      .get(`http://localhost:8000/user/address/getbyid/${id}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         console.log(res);
         setPersonalInformation(res.data.personalInfo);
@@ -50,7 +53,10 @@ function UserProfileAddAddress() {
       address,
     };
     axios
-      .put(`http://localhost:8000/user/address/update/${id}`, data)
+      .put(`http://localhost:8000/user/address/update/${id}`, data, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === true) {
           alert("Address Updated !!");
@@ -86,7 +92,10 @@ function UserProfileAddAddress() {
       address,
     };
     axios
-      .post(`http://localhost:8000/user/address/add`, data)
+      .post(`http://localhost:8000/user/address/add`, data, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === true) {
           alert("Address Added !!");
