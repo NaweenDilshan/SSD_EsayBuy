@@ -3,28 +3,49 @@ const cloudinary = require("../../utils/cloudinary");
 const Items = require("../../Models/Deborah/items");
 const router = express.Router();
 const { authentication } = require("../../auth/authentication");
-//to save item details
+const fileUpload = require("express-fileupload");
+
+// Use express-fileupload middleware
+router.use(
+  fileUpload({
+    limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB (adjust as needed)
+  })
+);
+
+// To save item details
 router.post("/save", authentication, (req, res) => {
-  const paths = req.file.path;
+  if (!req.files || !req.files.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  const file = req.files.file;
   const { name, category, quantity, price, status, Description, sellerID } =
     req.body;
-  cloudinary.uploader.upload(paths, function (error, result) {
+
+  // Check file type if needed (e.g., allow only images)
+  // if (!file.mimetype.startsWith("image/")) {
+  //   return res.status(400).json({ message: "Only image files are allowed" });
+  // }
+
+  cloudinary.uploader.upload(file.tempFilePath, function (error, result) {
     if (error) {
       console.log(error);
-    } else {
-      let link = result.secure_url;
-      saveProductData(
-        link,
-        name,
-        category,
-        quantity,
-        price,
-        status,
-        Description,
-        sellerID
-      );
+      return res.status(500).json({ message: "File upload failed" });
     }
+
+    const link = result.secure_url;
+    saveProductData(
+      link,
+      name,
+      category,
+      quantity,
+      price,
+      status,
+      Description,
+      sellerID
+    );
   });
+
   function saveProductData(
     link,
     name,
@@ -51,7 +72,7 @@ router.post("/save", authentication, (req, res) => {
         res.json(data);
       })
       .catch((err) => {
-        res.json(err);
+        res.status(500).json({ message: "Failed to save item details", error: err });
       });
   }
 });
@@ -129,3 +150,4 @@ router.delete("/itemDetails/delete/:id", authentication, (req, res) => {
 });
 
 module.exports = router;
+
