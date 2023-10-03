@@ -118,7 +118,7 @@ function UserProfilePaymentOptions() {
                       <div class="panel">
                         <div class="card card--front">
                           <div class="card__number">
-                            Card No: {item.cardNumber}
+                            {/* Card No: {item.cardNumber} */}
                           </div>
                           <div class="card__expiry-date">
                             Exp Date: {item.expireDate}

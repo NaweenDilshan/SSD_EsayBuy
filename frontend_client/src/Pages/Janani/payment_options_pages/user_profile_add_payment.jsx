@@ -6,8 +6,12 @@ import "../../../Css/Janani/user_profile_home.css";
 import Image from "../../../Assets/addpayment.png";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
+import bcrypt from "bcryptjs"; 
+
 
 function UserProfileAddPayment() {
+  const apiUrl = process.env.DB_URL || "http://localhost:8000";
+
   const nav = useNavigate();
   const [email, setEmail] = useState(localStorage.getItem("email"));
 
@@ -21,47 +25,46 @@ function UserProfileAddPayment() {
   const navigate = useNavigate();
 
   const addHandler = () => {
-    if (cardName == "") {
-      alert("Please provide the card name");
-      return;
-    } else if (cardNumber == "") {
-      alert("Please provide the card number");
-      return;
-    } else if (cvv == "") {
-      alert("Please provide the CVV number");
-      return;
-    } else if (expireDate == "") {
-      alert("Please selecet the expire date");
-      return;
-    } else if (cardNumber.length != 16) {
-      alert("Card number is not valid  (should be 16 digit)");
-      return;
-    } else if (cvv.length <= 3 && cvv.length > 10) {
-      alert(`Card CVV number is not valid`);
+    if (cardName === "" || cardNumber === "" || cvv === "" || expireDate === "") {
+      alert("Please provide all payment details.");
       return;
     }
 
-    const data = {
-      cardNumber,
-      cardName,
-      cvv,
-      expireDate,
-      email,
-      cardType,
-    };
-    axios
-      .post(`http://localhost:8000/user/payment-options/add`, data)
-      .then((res) => {
-        if (res.data.status === true) {
-          alert("Payment Details Added !!");
+    if (cardNumber.length !== 16) {
+      alert("Card number should be 16 digits.");
+      return;
+    }
+
+    if (cvv.length < 3 || cvv.length > 4) {
+      alert("CVV number is not valid.");
+      return;
+    }
+
+    try {
+      const hashedPassword = bcrypt.hashSync(cardNumber, 10); // Hash the card number synchronously
+      const data = {
+        cardNumber: hashedPassword, // Store hashed card number
+        cardName,
+        cvv,
+        expireDate,
+        email,
+        cardType,
+      };
+
+      // Send data to the server
+      // Use apiUrl to construct the request URL
+      axios.post(`${apiUrl}/user/payment-options/add`, data).then((response) => {
+        if (response.data.status === true) {
+          alert("Payment Details Added!!");
           navigate("/profile/payment");
         } else {
-          alert(res.data.message);
+          alert(response.data.message);
         }
-      })
-      .catch((err) => {
-        console.log(err);
       });
+    } catch (error) {
+      console.error("Error adding payment:", error);
+      alert("Something went wrong while adding payment details.");
+    }
   };
 
   return (
