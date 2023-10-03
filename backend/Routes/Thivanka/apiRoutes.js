@@ -5,31 +5,39 @@ const Product = require("../../Models/Deborah/items");
 
 // client's items save in the cart
 router.route("/cart/item/save").post(async (req, res) => {
-  const itemDetails = req.body;
-  const items = await Cart.findOne({ email: { $eq: itemDetails.email } });
-  if (!items) {
-    const cart = new Cart(itemDetails);
-    await cart 
-      .save()
-      .then((data) => {
-        res.json({ status: true, data });
-      })
-      .catch((err) => {
-        res.json({ status: false, err });
-      });
-  } else {
-    await Cart.findOneAndUpdate(
-      { email: itemDetails.email },
-      { $push: { items: itemDetails.items } }
-    )
-      .then((data) => {
-        res.json({ status: true, data });
-      })
-      .catch((err) => {
-        res.json({ status: false, err });
-      });
+  try {
+    const itemDetails = req.body;
+
+    // Validate and sanitize input
+    if (!isValidItemDetails(itemDetails)) {
+      throw new Error('Invalid item details.');
+    }
+
+    const existingCart = await Cart.findOne({ email: itemDetails.email });
+
+    if (!existingCart) {
+      const newCart = new Cart(itemDetails);
+      const savedCart = await newCart.save();
+      res.json({ status: true, data: savedCart });
+    } else {
+      await Cart.findOneAndUpdate(
+        { email: itemDetails.email },
+        { $push: { items: itemDetails.items } }
+      );
+
+      res.json({ status: true, data: 'Item added to cart.' });
+    }
+  } catch (error) {
+    res.status(400).json({ status: false, message: error.message });
   }
 });
+
+// Helper function to validate item details
+const isValidItemDetails = (itemDetails) => {
+  // Implement validation logic based on your requirements
+  return itemDetails && itemDetails.email && Array.isArray(itemDetails.items);
+};
+
 
 // client's items get from the cart
 router.route("/cart/item/:email").get(async (req, res) => {
