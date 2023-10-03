@@ -14,7 +14,10 @@ function OrderDetail(props) {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/client/order/item/image/${props.pid}`)
+      .get(`http://localhost:8000/client/order/item/image/${props.pid}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === true) {
           setData(res.data.details);

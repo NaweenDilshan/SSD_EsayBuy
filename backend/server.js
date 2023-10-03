@@ -9,7 +9,12 @@ const cookieParser = require("cookie-parser");
 
 dotenv.config();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    credentials: true,
+  })
+);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -40,7 +45,11 @@ app.use(
 app.use("/client", require("./Routes/Thivanka/apiRoutes"));
 app.use("/user", require("./Routes/Janani/apiRoutes"));
 
-app.use("/items", upload.single('image'), require('./Routes/Deborah/itemRoutes'));
+app.use(
+  "/items",
+  upload.single("image"),
+  require("./Routes/Deborah/itemRoutes")
+);
 app.use("/client", require("./Routes/Thivanka/apiRoutes"));
 app.use("/user", require("./Routes/Janani/apiRoutes"));
 

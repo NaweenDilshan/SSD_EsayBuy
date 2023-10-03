@@ -13,7 +13,10 @@ function HomePage() {
 
   function getItem() {
     axios
-      .get("http://localhost:8000/client/product/get")
+      .get("http://localhost:8000/client/product/get", {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === true) {
           setDetial(res.data.data);

@@ -50,7 +50,7 @@ router.route("/login/:email/:password").get((req, res) => {
         let cookies = jwtAuth.generateToken("hi");
         res.cookie("token", cookies, {
           httpOnly: true,
-          secure: true,
+          // secure: true,
         });
         res.json(data);
       });

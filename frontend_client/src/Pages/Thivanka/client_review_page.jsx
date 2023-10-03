@@ -28,7 +28,10 @@ function ClientReviewPage() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/client/order/item/image/${itemId}`)
+      .get(`http://localhost:8000/client/order/item/image/${itemId}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === true) {
           setImage(res.data.details);
@@ -52,7 +55,11 @@ function ClientReviewPage() {
       axios
         .post(
           `http://localhost:8000/client/item/rating/save/${itemId}/${oId}`,
-          data
+          data,
+          {
+            withCredentials: true,
+            credentials: "include",
+          }
         )
         .then((res) => {
           if (res.status === true) {

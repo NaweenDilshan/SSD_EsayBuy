@@ -14,13 +14,15 @@ function Order() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/client/all/order/${Id}`)
+      .get(`http://localhost:8000/client/all/order/${Id}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === false) {
           alert(res.data.message);
         } else {
           setDetails(res.data.order);
-          
         }
       })
       .catch((err) => {

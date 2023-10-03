@@ -14,7 +14,10 @@ function ShippedPage() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/client/order/${Id}/Shipped`)
+      .get(`http://localhost:8000/client/order/${Id}/Shipped`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data.status === false) {
           alert(res.data.message);

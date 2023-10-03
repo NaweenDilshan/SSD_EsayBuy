@@ -34,7 +34,10 @@ function HomeHeader() {
 
   function fetchdata() {
     axios
-      .get(`http://localhost:8000/client/cart/item/${email}`)
+      .get(`http://localhost:8000/client/cart/item/${email}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((res) => {
         if (res.data !== null) {
           setDetails(res.data);

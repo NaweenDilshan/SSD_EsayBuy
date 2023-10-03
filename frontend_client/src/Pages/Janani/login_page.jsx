@@ -19,7 +19,10 @@ function Login() {
       alert("All the fields required!");
     } else {
       axios
-        .get(`http://localhost:8000/user/login/${emai}/${password}`)
+        .get(`http://localhost:8000/user/login/${emai}/${password}`, {
+          withCredentials: true,
+          credentials: "include",
+        })
         .then((res) => {
           if (res.data !== null) {
             localStorage.setItem("name", res.data.name);
