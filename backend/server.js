@@ -3,31 +3,32 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
-require("dotenv").config();
 const app = express();
 const upload = require("./utils/multer");
+
+dotenv.config();
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
-//Database Connection URL
-const URL = process.env.DB_URL;
 
-//Check the database connection
-mongoose.connect(URL)
-.then(() => console.log("Database connect successfully!"))
-.catch((err) => console.log(err));
+// Database Connection URL
+const DB_URL = process.env.DB_URL;
 
-app.use("/items", upload.single('image'), require('./Routes/Deborah/itemRoutes')) 
-app.use("/client", require("./Routes/Thivanka/apiRoutes")); 
-    app.use("/user",  require("./Routes/Janani/apiRoutes")
-); 
+// Check the database connection
+mongoose
+  .connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("Database connected successfully!"))
+  .catch((err) => console.error("Database connection error:", err));
 
-//port Number Assign
-const port = process.env.port || 8000;
+app.use("/items", upload.single('image'), require('./Routes/Deborah/itemRoutes'));
+app.use("/client", require("./Routes/Thivanka/apiRoutes"));
+app.use("/user", require("./Routes/Janani/apiRoutes"));
 
-//Display the working port
-app.listen(port,()=>{
-    console.log(`Server is up and running port: ${port}`)
-})
+// Port Number Assignment
+const PORT = process.env.PORT || 8000;
+
+// Display the working port
+app.listen(PORT, () => {
+  console.log(`Server is up and running on port: ${PORT}`);
+});

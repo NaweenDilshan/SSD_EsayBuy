@@ -8,33 +8,28 @@ const Order = require("../../Models/Thivanka/order");
 //user registration routes
 router.route("/data/save").post(async (req, res) => {
   const { name, email, country, password } = req.body;
-  const user = User.find({ email: { $eq: email } });
-  if (!user) {
-    res.json({ status: false, message: "This user is alraedy exist!" });
-  } else {
-    const details = new User({
-      name: name,
-      mobile: "0000000000",
-      bdate: "0",
-      email: email,
-      country: country,
-      password: password,
-    });
-    await details
-      .save()
-      .then(() => {
-        res.json({
-          status: true,
-          message: "Registration Done!",
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.json({
-          status: false,
-          message: "Something went wrong!",
-        });
+
+  try {
+    const existingUser = await User.findOne({ email: email });
+
+    if (existingUser) {
+      res.json({ status: false, message: "This user already exists!" });
+    } else {
+      const details = new User({
+        name: name,
+        mobile: "0000000000",
+        bdate: "0",
+        email: email,
+        country: country,
+        password: password,
       });
+
+      await details.save();
+      res.json({ status: true, message: "Registration Done!" });
+    }
+  } catch (error) {
+    console.error("Error during user registration:", error);
+    res.json({ status: false, message: "Something went wrong!" });
   }
 });
 

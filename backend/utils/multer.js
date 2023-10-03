@@ -1,33 +1,33 @@
 const path = require("path");
 const multer = require("multer");
 
-var storage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    let ext = path.extname(file.originalname);
+    const ext = path.extname(file.originalname);
     cb(null, Date.now() + ext);
   },
 });
 
-var upload = multer({
-  storage: storage,
-  fileFilter: function (req, file, callback) {
-    // if(
-    //     file.mimetype=="image/png"||
-    //     file.mimetype=="image/jpg"
-    // ){
+const fileFilter = function (req, file, callback) {
+  // Allowed file types (e.g., JPEG, PNG)
+  const allowedFileTypes = ["image/jpeg", "image/png"];
+  
+  if (allowedFileTypes.includes(file.mimetype)) {
     callback(null, true);
-    // }
-    // else{
-    //     console.log("only jpg png can supported")
-    //     callback(null,false)
-    // }
+  } else {
+    callback(new Error("Invalid file type. Only JPEG and PNG files are allowed."), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 1024 * 1024 * 2, // Limit file size to 2MB
   },
-  // limits:{
-  //     fileSize:100000
-  // }
 });
 
 module.exports = upload;
