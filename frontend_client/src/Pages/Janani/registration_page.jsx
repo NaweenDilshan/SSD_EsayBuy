@@ -18,6 +18,7 @@ function Regitstration() {
   const navigation = useNavigate();
 
   const submitHandler = () => {
+<<<<<<< Updated upstream
 
     const nameRegex = /^[a-zA-Z0-9\s]+$/;
     if (!nameRegex.test(name)) {
@@ -74,6 +75,58 @@ function Regitstration() {
        alert("An error occurred while submitting the data.");
      });
  };
+=======
+    
+    const nameRegex = /^[a-zA-Z0-9\s]+$/;
+    if (!nameRegex.test(name)) {
+      alert("Please enter a valid name.");
+      return;
+    }
+    const passwordRegex = /^[a-zA-Z0-9\s]+$/;
+    if (passwordRegex.test(password)) {
+      alert("Please enter a valid password (use Symbles)");
+      return;
+    }
+    // Email validation using validator library
+    if (!validator.isEmail(email)) {
+      alert("Please enter a valid email.");
+      return;
+    }
+    // Whitelist validation for country: allow specific country codes (e.g., IN, US, SL)
+    const allowedCountryCodes = ["IN", "US", "SL", "NZ", "UK", "Ausi", "Can", "France", "Japan", "Rus", "Italy"];
+    if (!allowedCountryCodes.includes(country)) {
+      alert("Please select a valid country.");
+      return;
+    }
+
+    const escapedName = encodeURIComponent(name);
+  const escapedEmail = encodeURIComponent(email);
+  const escapedCountry = encodeURIComponent(country);
+  const escapedPassword = encodeURIComponent(password);
+
+
+
+      //const data = { name, email, country, password };
+      const data = {
+        name: escapedName,
+        email: escapedEmail,
+        country: escapedCountry,
+        password: escapedPassword
+      };
+      
+      axios
+        .post("http://localhost:8000/user/data/save", data)
+        .then((res) => {
+          navigation("/");
+          alert(res.data.message);
+        })
+        .catch((err) => {
+          console.error("Error submitting data:", err);
+        alert("An error occurred while submitting the data.");
+        });
+    
+  };
+>>>>>>> Stashed changes
 
   return (
     <div className="site-main-container">
