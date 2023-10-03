@@ -55,6 +55,7 @@ router.route("/login/:email/:password").get((req, res) => {
         let cookies = jwtAuth.generateToken("hi");
         res.cookie("token", cookies, {
           httpOnly: true,
+          secure: true,
         });
         res.json(data);
       });
@@ -124,7 +125,7 @@ router.route("/details/get/:email").get(authentication, async (req, res) => {
     });
 });
 
-router.route("/details/getall" ).get( authentication, async (req, res) => {
+router.route("/details/getall").get(authentication, async (req, res) => {
   User.find()
     .then((data) => {
       res.json(data);

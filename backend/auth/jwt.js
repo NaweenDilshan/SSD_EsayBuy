@@ -9,6 +9,7 @@ class JWT {
     return jwt.sign({ email: email }, this._Token_key, {
       expiresIn: "1d",
       algorithm: "HS256",
+      
     });
   }
   decodeToken(token) {
