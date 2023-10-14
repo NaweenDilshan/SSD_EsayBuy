@@ -9,30 +9,37 @@ const tokenKey = process.env.TOKEN_KEY;
 const jwtAuth = new JWT(tokenKey);
 const { authentication } = require("../../auth/authentication");
 //user registration routes
-router.route("/data/save").post(async (req, res) => {
-  const { name, email, country, password } = req.body;
 
+router.post("/cart/item/save", async (req, res) => {
   try {
-    const existingUser = await User.findOne({ email: email });
+    const itemDetails = req.body;
 
-    if (existingUser) {
-      res.json({ status: false, message: "This user already exists!" });
+    // Validate and sanitize input
+    if (!isValidItemDetails(itemDetails)) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Invalid item details." });
+    }
+
+    const existingCart = await Cart.findOne({ email: itemDetails.email });
+
+    if (!existingCart) {
+      const newCart = new Cart(itemDetails);
+      const savedCart = await newCart.save();
+      res.setHeader("Cache-Control", "no-store"); // Prevent caching
+      return res.json({ status: true, data: savedCart });
     } else {
-      const details = new User({
-        name: name,
-        mobile: "0000000000",
-        bdate: "0",
-        email: email,
-        country: country,
-        password: password,
-      });
-
-      await details.save();
-      res.json({ status: true, message: "Registration Done!" });
+      await Cart.findOneAndUpdate(
+        { email: itemDetails.email },
+        { $push: { items: itemDetails.items } }
+      );
+      res.setHeader("Cache-Control", "no-store"); // Prevent caching
+      return res.json({ status: true, data: "Item added to cart." });
     }
   } catch (error) {
-    console.error("Error during user registration:", error);
-    res.json({ status: false, message: "Something went wrong!" });
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal server error." });
   }
 });
 
