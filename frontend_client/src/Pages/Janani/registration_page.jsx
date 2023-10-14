@@ -8,72 +8,67 @@ import LoginImage from "../../Assets/reg.png";
 import { useNavigate } from "react-router";
 import validator from "validator";
 import DOMPurify from "dompurify";
+import JSON5 from "json5";
 
-function Regitstration() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [country, setContry] = useState("");
-  const [password, setPassword] = useState("");
+function submitHandler() {
+  const name = "John"; // Replace with your form input values
+  const email = "john@example.com";
+  const country = "US";
+  const password = "SecurePassword123!"; // Replace with your form input values
 
-  const navigation = useNavigate();
+  // Validate and sanitize user inputs
+  const nameRegex = /^[a-zA-Z0-9\s]+$/;
+  if (!nameRegex.test(name)) {
+    alert("Please enter a valid name.");
+    return;
+  }
 
-  const submitHandler = () => {
+  // Password validation (customize as needed)
+  if (password.length < 8) {
+    alert("Password must be at least 8 characters long.");
+    return;
+  }
 
-    const nameRegex = /^[a-zA-Z0-9\s]+$/;
-    if (!nameRegex.test(name)) {
-      alert("Please enter a valid name.");
-      return;
-    }
+  // Email validation using validator library
+  if (!validator.isEmail(email)) {
+    alert("Please enter a valid email.");
+    return;
+  }
 
-    const passwordRegex = /^[a-zA-Z0-9\s]+$/;
-    if (passwordRegex.test(password)) {
-      alert("Please enter a valid password (use special charactors)");
-      return;
-    }
+  // Whitelist validation for country: allow specific country codes
+  const allowedCountryCodes = ["IN", "US", "SL", "NZ", "UK", "Ausi", "Can", "France", "Japan", "Rus", "Italy"];
+  if (!allowedCountryCodes.includes(country.toUpperCase())) {
+    alert("Please select a valid country.");
+    return;
+  }
 
-    // Email validation using validator library
-    if (!validator.isEmail(email)) {
-      alert("Please enter a valid email.");
-      return;
-    }
+  // Create a data object with sanitized values
+  const sanitizedData = {
+    name: name,
+    email: email,
+    country: country,
+    password: password,
+  };
 
-    // Whitelist validation for country: allow specific country codes (e.g., IN, US, SL)
-    const allowedCountryCodes = ["IN", "US", "SL", "NZ", "UK", "Ausi", "Can", "France", "Japan", "Rus", "Italy"];
-    if (!allowedCountryCodes.includes(country)) {
-      alert("Please select a valid country.");
-      return;
-    }
-    
-    const escapedName = encodeURIComponent(name);
-    const escapedEmail = encodeURIComponent(email);
-    const escapedCountry = encodeURIComponent(country);
-    const escapedPassword = encodeURIComponent(password);
+  // Convert sanitized data to a JSON string
+  const jsonData = JSON5.stringify(sanitizedData);
 
-    const data = {
-     name: escapedName,
-     email: escapedEmail,
-     country: escapedCountry,
-     password: escapedPassword
-    };
-     // Sanitize data
-     const sanitizedData = DOMPurify.sanitize(JSON.stringify(data));
-
-
-     axios
-     .post("http://localhost:8000/user/data/save", sanitizedData, {
-       headers: {
-         "Content-Type": "application/json"
-       }
-     })
-     .then((res) => {
-       navigation("/");
-       alert(res.data.message);
-     })
-     .catch((err) => {
-       console.error("Error submitting data:", err);
-       alert("An error occurred while submitting the data.");
-     });
- };
+  // Send the JSON data to the server
+  axios
+    .post("http://localhost:8000/user/data/save", jsonData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => {
+      navigation("/");
+      alert(res.data.message);
+    })
+    .catch((err) => {
+      console.error("Error submitting data:", err);
+      alert("An error occurred while submitting the data.");
+    });
+}
 
   return (
     <div className="site-main-container">
